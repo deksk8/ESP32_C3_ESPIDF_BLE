@@ -1,0 +1,6 @@
+# components/ble_server/CMakeLists.txt
+idf_component_register(
+    SRCS "src/ble_server.c"
+    INCLUDE_DIRS "include"
+    REQUIRES "nvs_flash" "bt"
+)

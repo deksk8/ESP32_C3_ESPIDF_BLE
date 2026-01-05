@@ -1,0 +1,34 @@
+# Kconfig para o módulo FreeRTOS
+
+menu "FreeRTOS Module Configuration"
+
+    config FREERTOS_MODULE_ENABLED
+        bool "Enable FreeRTOS Module"
+        default y
+        help
+            Habilita o módulo de demonstração FreeRTOS com tarefas, mutex e queue.
+
+    config FREERTOS_MODULE_PRODUCER_TASK_STACK_SIZE
+        int "Producer Task Stack Size"
+        default 4096
+        range 1024 8192
+        depends on FREERTOS_MODULE_ENABLED
+        help
+            Tamanho da stack para a tarefa do produtor.
+
+    config FREERTOS_MODULE_CONSUMER_TASK_STACK_SIZE
+        int "Consumer Task Stack Size"
+        default 4096
+        range 1024 8192
+        depends on FREERTOS_MODULE_ENABLED
+        help
+            Tamanho da stack para a tarefa do consumidor.
+
+    config FREERTOS_MODULE_QUEUE_SIZE
+        int "Queue Size"
+        default 10
+        range 5 20
+        depends on FREERTOS_MODULE_ENABLED
+        help
+            Tamanho da fila de mensagens.
+endmenu 
