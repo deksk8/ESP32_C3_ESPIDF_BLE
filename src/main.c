@@ -53,7 +53,7 @@ void on_ble_connect(uint16_t conn_handle)
 void on_ble_disconnect(void)
 {
     ESP_LOGI(TAG, "📴 Cliente desconectado");
-    status_led_set_color(LED_COLOR_OFF);
+    status_led_set_color(LED_COLOR_PURPLE);
 }
 
 void app_main(void)
