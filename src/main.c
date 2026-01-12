@@ -98,7 +98,7 @@ void app_main(void)
     status_led_init();
     status_led_set_color(LED_COLOR_PURPLE);
 
-    ESP_LOGI(TAG, "✅ Sistema pronto!");
+    ESP_LOGI(TAG, "Sistema pronto!");
 
     // while (1)
     // {

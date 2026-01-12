@@ -37,6 +37,11 @@ static const ble_uuid128_t gatt_svr_chr_status_uuid =
         0x23, 0xd1, 0xbc, 0xea, 0x5f, 0x78, 0x23, 0x15,
         0xde, 0xef, 0x12, 0x12, 0x24, 0x15, 0x00, 0x00);
 
+static const ble_uuid128_t gatt_svr_chr_datetime_uuid =
+    BLE_UUID128_INIT(
+        0x23, 0xd1, 0xbc, 0xea, 0x5f, 0x78, 0x23, 0x15,
+        0xde, 0xef, 0x12, 0x12, 0x26, 0x15, 0x00, 0x00);
+
 // ===== Estado do Servidor =====
 static uint16_t conn_handle = BLE_HS_CONN_HANDLE_NONE;
 static uint16_t status_val_handle;  // Handle da characteristic Status
@@ -96,6 +101,28 @@ static int gatt_svr_chr_access(uint16_t conn_handle, uint16_t attr_handle,
             return BLE_ATT_ERR_UNLIKELY;
         }
     }
+    if (ble_uuid_cmp(uuid, &gatt_svr_chr_datetime_uuid.u) == 0)
+    {
+        if (ctxt->op == BLE_GATT_ACCESS_OP_WRITE_CHR)
+        {
+            uint8_t data[7];
+            uint16_t len = ctxt->om->om_len;
+
+            if (len == 7)
+            {
+                ble_hs_mbuf_to_flat(ctxt->om, data, len, NULL);
+                ESP_LOGI(TAG, "Data/Hora: %02d/%02d/20%02d %02d:%02d:%02d",
+                         data[2], data[1], data[0], data[3], data[4], data[5]);
+
+                // Aqui você pode chamar uma função para atualizar o relógio (RTC)
+                return 0;
+            }
+            else
+            {
+                return BLE_ATT_ERR_INVALID_ATTR_VALUE_LEN;
+            }
+        }
+    }
 
     return BLE_ATT_ERR_UNLIKELY;
 }
@@ -117,15 +144,21 @@ static const struct ble_gatt_svc_def gatt_svr_svcs[] = {
                 // Characteristic: Status (Read + Notify)
                 .uuid = &gatt_svr_chr_status_uuid.u,
                 .access_cb = gatt_svr_chr_access,
-                .val_handle = &status_val_handle, // Salva handle para notify
+                .val_handle = &status_val_handle,
                 .flags = BLE_GATT_CHR_F_READ | BLE_GATT_CHR_F_NOTIFY,
             },
             {
-                0, // Fim da lista
+                // Characteristic: Data e Hora (Write)
+                .uuid = &gatt_svr_chr_datetime_uuid.u,
+                .access_cb = gatt_svr_chr_access,
+                .flags = BLE_GATT_CHR_F_WRITE,
+            },
+            {
+                0, // Fim da lista de características
             }},
     },
     {
-        0, // Fim da lista
+        0, // Fim da lista de serviços
     },
 };
 
