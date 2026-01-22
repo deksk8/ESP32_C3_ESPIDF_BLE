@@ -9,6 +9,7 @@
 
 static const char *TAG = "APP_MAIN";
 int contador = 0;
+int contador2 = 0;
 
 // Callback: Dados recebidos via Write
 void on_ble_write(uint8_t *data, uint16_t len)
@@ -17,7 +18,8 @@ void on_ble_write(uint8_t *data, uint16_t len)
 
     if (strncmp((char *)data, "UNLOCK", 6) == 0)
     {
-        ESP_LOGI(TAG, "🔓 Destravando fechadura...");
+        contador2++;
+        ESP_LOGI(TAG, "🔓 Destravando fechadura... Contador: %d", contador2);
         status_led_set_color(LED_COLOR_GREEN); // Simples assim!
 
         // Simula destrave
@@ -25,6 +27,11 @@ void on_ble_write(uint8_t *data, uint16_t len)
 
         // Atualiza status
         ble_server_update_read_value(1); // 1 = Destravado
+
+        // uint8_t status[] = "LOCKED_NOW";
+        // ble_server_notify(status, sizeof(status));
+        // contador2 = 0;
+        // return;
 
         // Envia notificação
         uint8_t status[] = "UNLOCKED";
